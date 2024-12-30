@@ -84,21 +84,25 @@ public class AssessmentController {
         long correctAnswers = answers.stream()
                 .filter(answer -> {
                     Question question = questionService.getQuestionById(answer.getQuestionId());
-                    return question != null && question.getAnswer() == answer.getAnswer();
+                    // Check if the question ID matches and the answer is correct
+                    return question != null && question.getQuestionId() == answer.getQuestionId() && question.getAnswer() == answer.getAnswer();
                 }).count();
         long incorrectAnswers = answers.size() - correctAnswers;
-         //Store the evaluation result
+
+        // Store the evaluation result
         Evaluation evaluation = new Evaluation();
-        evaluation.setCandidateId(candidateId); evaluation.setCorrectAnswers(correctAnswers);
+        evaluation.setCandidateId(candidateId);
+        evaluation.setCorrectAnswers(correctAnswers);
         evaluation.setIncorrectAnswers(incorrectAnswers);
         evaluationService.createEvaluation(evaluation);
 
         String resultMessage = correctAnswers > 6
-                ? "Candidate ID: " + candidateId + " is selected for the next round.\nCorrect Answers: " + correctAnswers + "\nIncorrect Answers: " + (answers.size() - correctAnswers)
-                : "Sorry, you are not selected. Better luck next time.\nCorrect Answers: " + correctAnswers + "\nIncorrect Answers: " + (answers.size() - correctAnswers);
+                ? "Candidate ID: " + candidateId + " is selected for the next round.\nCorrect Answers: " + correctAnswers + "\nIncorrect Answers: " + incorrectAnswers
+                : "Sorry, you are not selected. Better luck next time.\nCorrect Answers: " + correctAnswers + "\nIncorrect Answers: " + incorrectAnswers;
 
         return ResponseEntity.ok(resultMessage);
     }
+
 }
 
 

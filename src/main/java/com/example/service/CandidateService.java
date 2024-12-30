@@ -84,7 +84,8 @@ public class CandidateService {
         long correctAnswers = answers.stream()
                 .filter(answer -> {
                     Question question = questionRepository.findById(answer.getQuestionId()).orElse(null);
-                    return question != null && question.getAnswer()==answer.getAnswer();
+                    // Ensure question ID matches and the answer is correct
+                    return question != null && question.getQuestionId() == answer.getQuestionId() && question.getAnswer() == answer.getAnswer();
                 }).count();
 
         // Return the appropriate message
@@ -92,6 +93,7 @@ public class CandidateService {
                 ? "Candidate ID: " + candidateId + " is selected for the next Round.\nCorrect Answers: " + correctAnswers + "\nIncorrect Answers: " + (answers.size() - correctAnswers)
                 : "Candidate ID: " + candidateId + " is rejected in this Round.\nCorrect Answers: " + correctAnswers + "\nIncorrect Answers: " + (answers.size() - correctAnswers);
     }
+
 
     private boolean emailExists(String emailId) {
         return candidateRepository.findByEmailId(emailId).isPresent();

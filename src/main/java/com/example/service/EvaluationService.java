@@ -45,15 +45,17 @@ public class EvaluationService {
         long correctCount = answers.stream()
                 .filter(answer -> questionRepository.findById(answer.getQuestionId())
                         .map(question -> {
+                            int questionId = question.getQuestionId();
                             int correctAnswer = question.getAnswer();
                             int candidateAnswer = answer.getAnswer();
-                            return correctAnswer == candidateAnswer;
+                            // Compare both the questionId and answer
+                            return (questionId == answer.getQuestionId()) && (correctAnswer == candidateAnswer);
                         })
                         .orElse(false))
                 .count();
 
         int totalQuestions = answers.size();
-        int incorrectCount = (int)totalQuestions - (int) correctCount;
+        int incorrectCount = totalQuestions - (int) correctCount;
 
         // Debug: Print counts
         System.out.println("Correct Answers: " + correctCount);
@@ -68,6 +70,7 @@ public class EvaluationService {
 
         return resultMessage;
     }
+
 
 
 }
